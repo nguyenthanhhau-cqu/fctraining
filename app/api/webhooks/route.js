@@ -2,6 +2,8 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { createOrUpdateUser, deleteUser } from "@lib/actions/user";
 
+
+
 export async function POST(req) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhooks
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
@@ -62,7 +64,6 @@ export async function POST(req) {
         last_name,
         image_url,
         email_addresses,
-        username
       );
 
       return new Response("User is created or updated", {
