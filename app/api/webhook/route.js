@@ -1,5 +1,6 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
+import {createOrUpdateUser, deleteUser} from "@lib/actions/user";
 
 export async function POST(req) {
 
@@ -10,8 +11,6 @@ export async function POST(req) {
     throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
   }
 
-  console.log(WEBHOOK_SECRET)
-  console.log("i'm here")
 
   // Get the headers
   const headerPayload = headers()
@@ -53,8 +52,44 @@ export async function POST(req) {
   const { id } = evt.data
   const eventType = evt.type
 
-  console.log(`Webhook with and ID of ${id} and type of ${eventType}`)
-  console.log('Webhook body:', body)
+  if (eventType === "user.created" || eventType === "user.updated") {
+    const { id, first_name, last_name, image_url, email_addresses, username } =
+        evt?.data;
 
-  return new Response('', { status: 200 })
+    try {
+      await createOrUpdateUser(
+          id,
+          first_name,
+          last_name,
+          image_url,
+          email_addresses,
+          username
+      );
+
+      return new Response("User is created or updated", {
+        status: 200,
+      });
+    } catch (err) {
+      console.error("Error creating or updating user:", err);
+      return new Response("Error occured", {
+        status: 500,
+      });
+    }
+  }
+
+  if (eventType === "user.deleted") {
+    try {
+      const {id} = evt?.data;
+      await deleteUser(id);
+
+      return new Response("User is deleted", {
+        status: 200,
+      });
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      return new Response("Error occured", {
+        status: 500,
+      });
+    }
+  }
 }
