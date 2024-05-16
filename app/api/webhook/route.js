@@ -39,10 +39,10 @@ export default async function handler(req, res) {
   const eventType = evt.type;
 
   if (eventType === 'user.created' || eventType === 'user.updated') {
-    const { first_name, last_name, image_url, email_addresses, username } = evt.data;
+    const { first_name, last_name, image_url, email_addresses } = evt.data;
 
     try {
-      await createOrUpdateUser(id, first_name, last_name, image_url, email_addresses, username);
+      await createOrUpdateUser(id, first_name, last_name, image_url, email_addresses);
       return res.status(200).json({ message: 'User is created or updated' });
     } catch (err) {
       console.error('Error creating or updating user:', err);
