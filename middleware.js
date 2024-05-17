@@ -1,7 +1,7 @@
 import { clerkMiddleware } from "@clerk/nextjs/server"
 
 export default clerkMiddleware({
-  apiUrl: "/api/webhook/clerk",
+  apiUrl: "/api/webhook/",
 });
 
 export const config = {
