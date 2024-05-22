@@ -86,7 +86,7 @@ const Posting = ({ post, apiEndpoint }) => {
           <p>Upload a photo</p>
         </label>
         <input
-            {...register("postPhoto")}
+            {...register("postPhoto", { validate: validatePhoto })}
             id="photo"
             type="file"
             style={{ display: "none" }}

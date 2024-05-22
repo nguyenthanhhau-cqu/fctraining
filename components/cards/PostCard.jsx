@@ -97,15 +97,13 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
         {post.caption}
       </p>
 
-        {post.postPhoto &&
-            <Image
-                src={post.postPhoto}
-                alt="post photo"
-                width={200}
-                height={150}
-                className="rounded-lg w-full"
-            />
-        }
+      <Image
+        src={post.postPhoto}
+        alt="post photo"
+        width={200}
+        height={150}
+        className="rounded-lg w-full"
+      />
 
       <p className="text-base-semibold text-purple-1 max-sm:text-small-normal">
         {post.tag}
