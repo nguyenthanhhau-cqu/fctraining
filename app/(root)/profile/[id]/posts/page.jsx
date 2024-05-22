@@ -32,8 +32,6 @@ const ProfilePosts = () => {
 
   const { user, isLoaded } = useUser();
 
-  console.log(userData)
-
   return loading || !isLoaded ? (
     <Loader />
   ) : (

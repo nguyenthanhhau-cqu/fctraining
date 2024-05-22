@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Add, Logout, Person, Search } from "@mui/icons-material";
+import { Add, Person, Search } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import {  UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -42,6 +42,7 @@ const TopBar = () => {
           placeholder="Search posts, people, ..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          writingsuggestions="true"
         />
         <Search
           className="search-icon"
