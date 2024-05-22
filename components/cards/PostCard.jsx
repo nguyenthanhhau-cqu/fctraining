@@ -9,19 +9,25 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // Import from next/navigation
 
 const PostCard = ({ post, creator, loggedInUser, update }) => {
     const [userData, setUserData] = useState({});
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!loggedInUser) {
+            router.push("/sign-in"); // Only run the router redirect on the client side
+        } else {
+            getUser();
+        }
+    }, [loggedInUser]);
 
     const getUser = async () => {
         const response = await fetch(`/api/user/${loggedInUser.id}`);
         const data = await response.json();
         setUserData(data);
     };
-
-    useEffect(() => {
-        getUser();
-    }, [loggedInUser.id]); // Depend on the user ID to ensure correct data fetching
 
     const isSaved = userData?.savedPosts?.find((item) => item._id === post._id);
     const isLiked = userData?.likedPosts?.find((item) => item._id === post._id);
@@ -38,7 +44,7 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
         );
         const data = await response.json();
         setUserData(data);
-        update(); // Trigger update to refresh the feed
+        update();
     };
 
     const handleLike = async () => {
@@ -53,15 +59,17 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
         );
         const data = await response.json();
         setUserData(data);
-        update(); // Trigger update to refresh the feed
+        update();
     };
 
     const handleDelete = async () => {
         await fetch(`/api/post/${post._id}/${userData._id}`, {
             method: "DELETE",
         });
-        update(); // Trigger update to refresh the feed
+        update();
     };
+
+    if (!loggedInUser) return null; // Ensure component doesn't render if user is not logged in
 
     return (
         <div className="w-full max-w-xl rounded-lg flex flex-col gap-4 bg-dark-1 p-5 max-sm:gap-2">
