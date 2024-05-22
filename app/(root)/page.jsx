@@ -9,7 +9,6 @@ const Home = () => {
   const { user, isLoaded } = useUser();
 
   const [loading, setLoading] = useState(true);
-
   const [feedPost, setFeedPost] = useState([]);
 
   const getFeedPost = async () => {
@@ -20,23 +19,23 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getFeedPost()
-  }, []);
+    getFeedPost();
+  }, []); // Initial fetch only
 
   return loading || !isLoaded ? (
-    <Loader />
+      <Loader />
   ) : (
-    <div className="flex flex-col gap-10">
-      {feedPost.map((post) => (
-        <PostCard
-          key={post._id}
-          post={post}
-          creator={post.creator}
-          loggedInUser={user}
-          update={getFeedPost}
-        />
-      ))}
-    </div>
+      <div className="flex flex-col gap-10">
+        {feedPost.map((post) => (
+            <PostCard
+                key={post._id}
+                post={post}
+                creator={post.creator}
+                loggedInUser={user}
+                update={getFeedPost} // Pass the update function
+            />
+        ))}
+      </div>
   );
 };
 
