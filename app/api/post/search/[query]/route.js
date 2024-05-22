@@ -1,11 +1,11 @@
 import Post from "@lib/models/Post";
-import { connectToDB } from "@lib/mongodb/mongoose";
+import { connectToDatabase } from "@lib/mongodb/mongoose";
 
 export const GET = async (req, { params }) => {
   const { query } = params;
 
   try {
-    await connectToDB();
+    await connectToDatabase();
 
     const searchedPosts = await Post.find({
       $or: [

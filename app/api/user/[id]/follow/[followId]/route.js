@@ -1,9 +1,9 @@
 import User from "@lib/models/User"
-import { connectToDB } from "@lib/mongodb/mongoose"
+import { connectToDatabase } from "@lib/mongodb/mongoose"
 
 export const POST = async (req, { params }) => {
   try {
-    await connectToDB()
+    await connectToDatabase()
 
     const userId = params.id
     const followId = params.followId

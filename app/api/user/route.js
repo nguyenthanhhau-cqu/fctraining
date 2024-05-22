@@ -1,9 +1,9 @@
 import User from "@lib/models/User"
-import { connectToDB } from "@lib/mongodb/mongoose"
+import { connectToDatabase } from "@lib/mongodb/mongoose"
 
 export const GET = async (req) => {
   try {
-    await connectToDB()
+    await connectToDatabase()
 
     const allUsers = await User.find().populate("posts savedPosts likedPosts followers following").exec()
 

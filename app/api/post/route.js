@@ -1,9 +1,9 @@
 import Post from "@lib/models/Post"
-import { connectToDB } from "@lib/mongodb/mongoose"
+import { connectToDatabase } from "@lib/mongodb/mongoose"
 
 export const GET = async (req) => {
   try {
-    await connectToDB()
+    await connectToDatabase()
 
     const feedPosts = await Post.find().populate("creator likes").exec()
 

@@ -1,10 +1,10 @@
 import Post from "@lib/models/Post";
-import { connectToDB } from "@lib/mongodb/mongoose";
+import { connectToDatabase } from "@lib/mongodb/mongoose";
 import { writeFile } from "fs/promises";
 
 export const GET = async (req, { params }) => {
   try {
-    await connectToDB();
+    await connectToDatabase();
 
     const post = await Post.findById(params.id)
       .populate("creator likes")
@@ -22,7 +22,7 @@ export const POST = async (req, { params }) => {
   const currentWorkingDirectory = process.cwd();
 
   try {
-    await connectToDB();
+    await connectToDatabase();
 
     const data = await req.formData();
 
