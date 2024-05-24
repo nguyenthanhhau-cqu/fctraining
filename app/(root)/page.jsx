@@ -14,7 +14,12 @@ const Home = () => {
   const getFeedPost = async () => {
     const response = await fetch("/api/post", {
       method: "GET"});
+    if (!response.ok) {
+      throw new Error("Failed to fetch posts");
+    }
     const data = await response.json();
+    console.log("Posts fetched:", data);
+
     setFeedPost(data);
     setLoading(false);
   };
