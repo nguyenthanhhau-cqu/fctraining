@@ -12,23 +12,24 @@ const Home = () => {
   const [feedPost, setFeedPost] = useState([]);
 
   const getFeedPost = async () => {
-    const response = await fetch("/api/post", {
-      method: "GET"});
-    if (!response.ok) {
-      throw new Error("Failed to fetch posts");
+    try {
+      const response = await fetch("/api/post", {
+        method: "GET",
+      });
+      const data = await response.json();
+      setFeedPost(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      setLoading(false);
     }
-    const data = await response.json();
-    console.log("Posts fetched:", data);
-
-    setFeedPost(data);
-    setLoading(false);
   };
 
   useEffect(() => {
     if (user) {
       getFeedPost();
     }
-  }, [user]); // Initial fetch only
+  }, [user]);
 
   return loading || !isLoaded ? (
       <Loader />
