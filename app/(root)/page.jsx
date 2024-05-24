@@ -13,18 +13,17 @@ const Home = () => {
 
   const getFeedPost = async () => {
     const response = await fetch("/api/post", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },});
+      method: "GET"});
     const data = await response.json();
     setFeedPost(data);
     setLoading(false);
   };
 
   useEffect(() => {
-    getFeedPost();
-  }, []); // Initial fetch only
+    if (user) {
+      getFeedPost();
+    }
+  }, [user]); // Initial fetch only
 
   return loading || !isLoaded ? (
       <Loader />
