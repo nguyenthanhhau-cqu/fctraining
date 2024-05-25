@@ -3,45 +3,25 @@
 import { useUser } from "@clerk/nextjs";
 import Loader from "@components/Loader";
 import PostCard from "@components/cards/PostCard";
-import { useEffect, useState } from "react";
+import useSWR from 'swr';
+
+const fetcher = url => fetch(url).then(res => res.json());
 
 const Home = () => {
   const { user, isLoaded } = useUser();
+  const { data, error, mutate } = useSWR('/api/post', fetcher);
 
-  const [loading, setLoading] = useState(true);
-  const [feedPost, setFeedPost] = useState([]);
+  if (!data || !isLoaded) return <Loader />;
 
-  const getFeedPost = async () => {
-    try {
-      const response = await fetch("/api/post", {
-        method: "GET",
-      });
-      const data = await response.json();
-      setFeedPost(data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      getFeedPost();
-    }
-  }, [user]);
-
-  return loading || !isLoaded ? (
-      <Loader />
-  ) : (
+  return (
       <div className="flex flex-col gap-10">
-        {feedPost.map((post) => (
+        {data.map((post) => (
             <PostCard
                 key={post._id}
                 post={post}
                 creator={post.creator}
                 loggedInUser={user}
-                update={getFeedPost} // Pass the update function
+                update={mutate} // Pass the mutate function
             />
         ))}
       </div>
