@@ -9,89 +9,59 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 const PostCard = ({ post, creator, loggedInUser, update }) => {
     const [userData, setUserData] = useState({});
-    const [likes, setLikes] = useState(post.likes.length);
-    const [isLiked, setIsLiked] = useState(
-        post.likes.includes(loggedInUser.id)
-    );
-    const router = useRouter();
-
-    useEffect(() => {
-        if (!loggedInUser) {
-            router.push("/sign-in");
-        } else {
-            getUser();
-        }
-    }, [loggedInUser]);
 
     const getUser = async () => {
-        try {
-            const response = await fetch(`/api/user/${loggedInUser.id}`);
-            const data = await response.json();
-            setUserData(data);
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
+        const response = await fetch(`/api/user/${loggedInUser.id}`);
+        const data = await response.json();
+        setUserData(data);
+    };
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+    const isSaved = userData?.savedPosts?.find((item) => item._id === post._id);
+    const isLiked = userData?.likedPosts?.find((item) => item._id === post._id);
+
+    const handleSave = async () => {
+        const response = await fetch(
+            `/api/user/${loggedInUser.id}/save/${post._id}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        const data = await response.json();
+        setUserData(data);
+        update()
     };
 
     const handleLike = async () => {
-        try {
-            const response = await fetch(
-                `/api/user/${loggedInUser.id}/like/${post._id}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.ok) {
-                setIsLiked(!isLiked);
-                setLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
-                update(); // Revalidate data
-            } else {
-                console.error("Error liking post:", response.statusText);
+        const response = await fetch(
+            `/api/user/${loggedInUser.id}/like/${post._id}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
             }
-        } catch (error) {
-            console.error("Error liking post:", error);
-        }
-    };
-
-    const handleSave = async () => {
-        try {
-            const response = await fetch(
-                `/api/user/${loggedInUser.id}/save/${post._id}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            const data = await response.json();
-            setUserData(data);
-            update(); // Revalidate data
-        } catch (error) {
-            console.error("Error saving post:", error);
-        }
+        );
+        const data = await response.json();
+        setUserData(data);
+        update()
     };
 
     const handleDelete = async () => {
-        try {
-            await fetch(`/api/post/${post._id}/${userData._id}`, {
-                method: "DELETE",
-            });
-            update(); // Revalidate data
-        } catch (error) {
-            console.error("Error deleting post:", error);
-        }
-    };
-
-    if (!loggedInUser) return null;
+        await fetch(`/api/post/${post._id}/${userData._id}`, {
+            method: "DELETE",
+        });
+        update()
+    }
 
     return (
         <div className="w-full max-w-xl rounded-lg flex flex-col gap-4 bg-dark-1 p-5 max-sm:gap-2">
@@ -142,22 +112,22 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
             <div className="flex justify-between">
                 <div className="flex gap-2 items-center">
                     {!isLiked ? (
-                        <FavoriteBorder sx={{ color: "white", cursor: "pointer" }} onClick={handleLike} />
+                        <FavoriteBorder sx={{ color: "white", cursor: "pointer" }} onClick={() => handleLike()} />
                     ) : (
-                        <Favorite sx={{ color: "red", cursor: "pointer" }} onClick={handleLike} />
+                        <Favorite sx={{ color: "red", cursor: "pointer" }} onClick={() => handleLike()} />
                     )}
-                    <p className="text-light-1">{likes}</p>
+                    <p className="text-light-1">{post.likes.length}</p>
                 </div>
 
                 {loggedInUser.id !== creator.clerkId &&
-                    (userData.savedPosts?.includes(post._id) ? (
-                        <Bookmark sx={{ color: "purple", cursor: "pointer" }} onClick={handleSave} />
+                    (isSaved ? (
+                        <Bookmark sx={{ color: "purple", cursor: "pointer" }} onClick={() => handleSave()} />
                     ) : (
-                        <BookmarkBorder sx={{ color: "white", cursor: "pointer" }} onClick={handleSave} />
+                        <BookmarkBorder sx={{ color: "white", cursor: "pointer" }} onClick={() => handleSave()} />
                     ))}
 
                 {loggedInUser.id === creator.clerkId && (
-                    <Delete sx={{ color: "white", cursor: "pointer" }} onClick={handleDelete} />
+                    <Delete sx={{ color: "white", cursor: "pointer" }} onClick={() => handleDelete()} />
                 )}
             </div>
         </div>
