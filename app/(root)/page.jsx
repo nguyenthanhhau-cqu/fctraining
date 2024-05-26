@@ -3,37 +3,27 @@
 import { useUser } from "@clerk/nextjs";
 import Loader from "@components/Loader";
 import PostCard from "@components/cards/PostCard";
-import { useEffect, useState } from "react";
+import useSWR from 'swr';
+
+// Fetcher function to fetch data from the API
+const fetcher = url => fetch(url).then(res => res.json());
 
 const Home = () => {
   const { user, isLoaded } = useUser();
+  const { data, error, mutate } = useSWR('/api/post', fetcher);
 
-  const [loading, setLoading] = useState(true);
+  if (error) return <div>Failed to load</div>;
+  if (!data || !isLoaded) return <Loader />;
 
-  const [feedPost, setFeedPost] = useState([]);
-
-  const getFeedPost = async () => {
-    const response = await fetch("/api/post");
-    const data = await response.json();
-    setFeedPost(data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getFeedPost()
-  }, []);
-
-  return loading || !isLoaded ? (
-      <Loader />
-  ) : (
+  return (
       <div className="flex flex-col gap-10">
-        {feedPost.map((post) => (
+        {data.map((post) => (
             <PostCard
                 key={post._id}
                 post={post}
                 creator={post.creator}
                 loggedInUser={user}
-                update={getFeedPost}
+                update={mutate} // Pass the mutate function to revalidate data
             />
         ))}
       </div>

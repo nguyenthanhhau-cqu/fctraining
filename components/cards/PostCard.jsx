@@ -38,7 +38,7 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
         );
         const data = await response.json();
         setUserData(data);
-        update()
+        update(); // Revalidate data
     };
 
     const handleLike = async () => {
@@ -53,14 +53,14 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
         );
         const data = await response.json();
         setUserData(data);
-        update()
+        update(); // Revalidate data
     };
 
     const handleDelete = async () => {
         await fetch(`/api/post/${post._id}/${userData._id}`, {
             method: "DELETE",
         });
-        update()
+        update(); // Revalidate data
     }
 
     return (
