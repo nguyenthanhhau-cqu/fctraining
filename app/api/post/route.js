@@ -1,15 +1,15 @@
-import Post from "@lib/models/Post";
-import { connectToDatabase } from "@lib/mongodb/mongoose";
+import Post from "@lib/models/Post"
+import { connectToDatabase } from "@lib/mongodb/mongoose"
 
 export const GET = async (req) => {
   try {
-    await connectToDatabase();
+    await connectToDatabase()
 
-    const feedPosts = await Post.find().populate("creator likes").exec();
+    const feedPosts = await Post.find().populate("creator likes").exec()
 
-    return new Response(JSON.stringify(feedPosts), { status: 200, headers: { "Access-Control-Allow-Origin": "*" } });
+    return new Response(JSON.stringify(feedPosts), { status: 200 })
   } catch (err) {
-    console.log("Error fetching feed posts:", err);
-    return new Response("Failed to fetch all Feed Posts", { status: 500 });
+    console.log(err)
+    return new Response("Failed to fetch all Feed Posts", { status: 500 })
   }
-};
+}
