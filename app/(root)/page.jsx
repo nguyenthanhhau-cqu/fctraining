@@ -15,6 +15,9 @@ const Home = () => {
     const getFeedPost = async () => {
         const response = await fetch("/api/post",{
             cache: "no-store",
+            next:{
+                revalidate:1
+            }
         });
         const data = await response.json();
         setFeedPost(data);
