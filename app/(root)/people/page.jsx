@@ -1,32 +1,31 @@
 "use client";
 
-import Loader from '@components/Loader'
-import UserCard from '@components/cards/UserCard'
-import React, { useEffect, useState } from 'react'
+import Loader from '@components/Loader';
+import UserCard from '@components/cards/UserCard';
+import useSWR from 'swr';
+import React from 'react';
+
+const fetcher = url => fetch(url).then(res => res.json());
 
 const People = () => {
-  const [loading, setLoading] = useState(true)
+    const { data, error, mutate } = useSWR('/api/user', fetcher);
 
-  const [allUsers, setAllUsers] = useState([])
+    if (error) {
+        console.error("Failed to load users:", error);
+        return <div>Failed to load users</div>;
+    }
 
-  const getAllUsers = async () => {
-    const response = await fetch(`/api/user`)
-    const data = await response.json()
-    setAllUsers(data)
-    setLoading(false)
-  }
+    if (!data) {
+        return <Loader />;
+    }
 
-  useEffect(() => {
-    getAllUsers()
-  }, [])
+    return (
+        <div className='flex flex-col gap-4 py-6'>
+            {data.map((user) => (
+                <UserCard key={user.id} userData={user} update={mutate} />
+            ))}
+        </div>
+    );
+};
 
-  return loading ? <Loader /> : (
-    <div className='flex flex-col gap-4 py-6'>
-      {allUsers?.map((user) => (
-        <UserCard key={user.id} userData={user} update={getAllUsers} />
-      ))}
-    </div>
-  )
-}
-
-export default People
+export default People;
