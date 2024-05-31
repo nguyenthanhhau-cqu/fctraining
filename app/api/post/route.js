@@ -1,14 +1,11 @@
 import Post from "@lib/models/Post";
 import { connectToDatabase } from "@lib/mongodb/mongoose";
 
-export const GET = async (req,res) => {
+export const GET = async () => {
   try {
     await connectToDatabase();
 
     const feedPosts = await Post.find().populate("creator likes").exec();
-
-    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120');
-
 
     return new Response(JSON.stringify(feedPosts), { status: 200 });
 
