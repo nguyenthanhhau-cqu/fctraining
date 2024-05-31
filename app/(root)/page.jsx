@@ -13,7 +13,7 @@ const Home = () => {
     const [feedPost, setFeedPost] = useState([]);
 
     const getFeedPost = async () => {
-        const response = await fetch("/api/post",);
+        const response = await fetch("/api/post");
         const data = await response.json();
         setFeedPost(data);
         setLoading(false);

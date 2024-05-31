@@ -1,4 +1,3 @@
-'use client'
 import {
     Bookmark,
     BookmarkBorder,
@@ -50,6 +49,8 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                cache:'force-cache',
+                revalidate:3,
             }
         );
         const data = await response.json();
