@@ -14,7 +14,7 @@ const Home = () => {
 
     const getFeedPost = async () => {
         const response = await fetch("/api/post",{
-            cache:'force-cache',
+            cache:'no-store',
         });
         const data = await response.json();
         setFeedPost(data);
