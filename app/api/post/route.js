@@ -1,11 +1,12 @@
 import Post from "@lib/models/Post";
 import { connectToDatabase } from "@lib/mongodb/mongoose";
 
-export const GET = async () => {
+export const GET = async (res) => {
   try {
     await connectToDatabase();
 
     const feedPosts = await Post.find().populate("creator likes").exec();
+
 
     return new Response(JSON.stringify(feedPosts), { status: 200 });
 
