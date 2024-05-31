@@ -24,7 +24,6 @@ export default function Home() {
     // Fetch posts data using SWR
     const { data, error, mutate } = useSWR(isLoaded && user ? '/api/post' : null, fetcher, {
         shouldRetryOnError: false,
-        refreshInterval: 1000, // Revalidate cache every second
     });
 
     // Render loader while user data or posts data is loading
