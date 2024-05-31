@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
 import { useUser } from "@clerk/nextjs";
 import Loader from "@components/Loader";
 import PostCard from "@components/cards/PostCard";
 import useSWR from 'swr';
+import { useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import {useEffect} from "react";
 
 // Fetcher function to fetch data from the API
 const fetcher = url => fetch(url).then(res => res.json());
 
-export default function Home() {
+const Home = () => {
     const { user, isLoaded } = useUser();
     const router = useRouter();
 
@@ -24,6 +24,7 @@ export default function Home() {
     // Fetch posts data using SWR
     const { data, error, mutate } = useSWR(isLoaded && user ? '/api/post' : null, fetcher, {
         shouldRetryOnError: false,
+        refreshInterval: 1000, // Revalidate cache every second
     });
 
     // Render loader while user data or posts data is loading
@@ -48,4 +49,6 @@ export default function Home() {
             ))}
         </div>
     );
-}
+};
+
+export default Home;
