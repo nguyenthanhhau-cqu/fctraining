@@ -1,32 +1,27 @@
-'use client';
+"use client";
 
 import { useUser } from "@clerk/nextjs";
 import Loader from "@components/Loader";
 import PostCard from "@components/cards/PostCard";
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
 
 const Home = () => {
     const { user, isLoaded } = useUser();
-    const router = useRouter();
 
     const [loading, setLoading] = useState(true);
+
     const [feedPost, setFeedPost] = useState([]);
 
     const getFeedPost = async () => {
-        const response = await fetch("/api/post");
+        const response = await fetch("/api/post",);
         const data = await response.json();
         setFeedPost(data);
         setLoading(false);
     };
 
     useEffect(() => {
-        if (isLoaded && !user) {
-            router.push('/sign-in');
-        } else if (isLoaded && user) {
-            getFeedPost();
-        }
-    }, [isLoaded, user]);
+        getFeedPost()
+    }, []);
 
     return loading || !isLoaded ? (
         <Loader />
