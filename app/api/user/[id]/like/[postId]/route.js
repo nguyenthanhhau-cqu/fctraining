@@ -9,8 +9,15 @@ export const POST = async (req, { params }) => {
     const userId = params.id;
     const postId = params.postId;
 
-    const user = await User.findOne({ clerkId: userId }).populate("likedPosts");
-    const post = await Post.findById(postId).populate("likes");
+    const user = await User.findOne({ clerkId: userId }).populate("posts savedPosts following followers").populate({
+      path: "likedPosts",
+      model: "Post",
+      populate: {
+        path: "creator",
+        model: "User",
+      },
+    })
+    const post = await Post.findById(postId).populate("creator likes")
 
     if (!user || !post) {
       return new Response("User or Post not found", { status: 404 });
