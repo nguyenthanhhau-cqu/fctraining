@@ -28,6 +28,7 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
     const isSaved = userData?.savedPosts?.find((item) => item._id === post._id);
 
     // Updated handleSave function
+// PostCard.jsx
     const handleSave = async () => {
         try {
             const response = await fetch(
@@ -43,7 +44,11 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
             if (response.ok) {
                 const updatedUser = await response.json();
                 setUserData(updatedUser);
-                update();
+
+                // Fetch updated post data
+                const updatedPostResponse = await fetch(`/api/post/${post._id}`);
+                const updatedPost = await updatedPostResponse.json();
+                update(updatedPost); // Pass the whole updated post object to update
             } else {
                 console.error("Failed to save post");
             }
