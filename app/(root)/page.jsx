@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
 // Fetcher function to fetch data from the API
-const fetcher = url => fetch(url).then(res => res.json());
+const fetcher = (...args) => fetch(...args).then(res => res.json()); // Updated to work with arguments
 
 const Home = () => {
     const { user, isLoaded } = useUser();
@@ -27,6 +27,12 @@ const Home = () => {
         refreshInterval: 1000, // Revalidate cache every second
     });
 
+
+    // Update the specific post in the feed
+    const handlePostUpdate = (updatedPost) => {
+        mutate(prevPosts => prevPosts.map(p => p._id === updatedPost._id ? updatedPost : p), false);
+    };
+
     // Render loader while user data or posts data is loading
     if (!isLoaded || !user || !data) {
         return <Loader />;
@@ -44,7 +50,7 @@ const Home = () => {
                     post={post}
                     creator={post.creator}
                     loggedInUser={user}
-                    update={mutate} // Pass the mutate function to revalidate data
+                    update={handlePostUpdate} // Pass the handlePostUpdate function to update individual post
                 />
             ))}
         </div>

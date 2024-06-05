@@ -33,9 +33,20 @@ export const POST = async (req, { params }) => {
         await user.save()
         await post.save()
 
-        return new Response(JSON.stringify(user), { status: 200 })
+        return new Response(
+            JSON.stringify({ user: user.toObject(), post: post.toObject() }), // Include both updated user and post
+            {
+                status: 200,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-store", // Prevent caching
+                },
+            }
+        );
     } catch (err) {
         console.log(err)
         return new Response("Failed to like/dislike post", { status: 500 })
     }
+
+
 }
