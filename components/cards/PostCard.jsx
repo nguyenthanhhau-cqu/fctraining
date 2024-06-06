@@ -28,7 +28,30 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
     const isSaved = userData?.savedPosts?.find((item) => item._id === post._id);
 
     // Updated handleSave function
-// PostCard.jsx
+    const handleLike = async () => {
+        try {
+            const response = await fetch(
+                `/api/user/${loggedInUser.id}/like/${post._id}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.ok) {
+                const updatedPost = await response.json();
+                setIsLiked(!isLiked);
+                update(); // Re-fetch the post data after liking/unliking
+            } else {
+                console.error('Failed to like post');
+            }
+        } catch (error) {
+            console.error('Error liking post:', error);
+        }
+    };
+
     const handleSave = async () => {
         try {
             const response = await fetch(
@@ -44,48 +67,12 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
             if (response.ok) {
                 const updatedUser = await response.json();
                 setUserData(updatedUser);
-
-                // Fetch updated post data
-                const updatedPostResponse = await fetch(`/api/post/${post._id}`);
-                const updatedPost = await updatedPostResponse.json();
-                update(updatedPost); // Pass the whole updated post object to update
+                update(); // Re-fetch the post data after saving/unsaving
             } else {
                 console.error("Failed to save post");
             }
         } catch (error) {
             console.error("Error saving post:", error);
-        }
-    };
-
-    // Updated handleLike function
-    const handleLike = async () => {
-        try {
-            const response = await fetch(
-                `/api/user/${loggedInUser.id}/like/${post._id}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.ok) {
-                const updatedUser = await response.json();
-                setUserData(updatedUser);
-                setIsLiked(!isLiked);
-
-                // Fetch updated post from API
-                const updatedPostResponse = await fetch(`/api/post/${post._id}`);
-                const updatedPost = await updatedPostResponse.json();
-
-                // Update the specific post in the feed
-                update(updatedPost);
-            } else {
-                console.error('Failed to like post');
-            }
-        } catch (error) {
-            console.error('Error liking post:', error);
         }
     };
 
