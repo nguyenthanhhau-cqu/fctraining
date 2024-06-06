@@ -30,22 +30,20 @@ export const POST = async (req, { params }) => {
             post.likes.push(user._id)
         }
 
-        await user.save()
-        await post.save()
+        await user.save();
+        await post.save();
 
-        return new Response(
-            JSON.stringify({ user: user.toObject(), post: post.toObject() }), // Include both updated user and post
-            {
-                status: 200,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-store", // Prevent caching
-                },
-            }
-        );
+        // Return the updated post object
+        return new Response(JSON.stringify(post.toObject()), {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate'
+            },
+        });
     } catch (err) {
-        console.log(err)
-        return new Response("Failed to like/dislike post", { status: 500 })
+        console.log(err);
+        return new Response('Failed to like/dislike post', { status: 500 });
     }
 
 
