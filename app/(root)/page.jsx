@@ -36,10 +36,18 @@ const Home = () => {
     );
 
     const handleLike = async (postId) => {
-        const response = await fetch(`/api/post/${postId}`);
-        const updatedPost = await response.json();
+        try {
+            const response = await fetch(`/api/user/${user.id}/like/${postId}`, { method: "POST" });
 
-        await mutate(prevPosts => prevPosts.map(p => p._id === postId ? updatedPost : p), false);
+            if (response.ok) {
+                // Revalidate the SWR cache for the /api/post route
+                mutate('/api/post');
+            } else {
+                console.error('Failed to like post');
+            }
+        } catch (error) {
+            console.error('Error liking post:', error);
+        }
     };
 
     if (!isLoaded || !user || !data) {
