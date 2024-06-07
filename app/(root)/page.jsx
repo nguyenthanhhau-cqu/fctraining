@@ -41,7 +41,7 @@ const Home = () => {
 
             if (response.ok) {
                 // Revalidate the SWR cache for the /api/post route
-                mutate('/api/post');
+                await mutate('/api/post');
             } else {
                 console.error('Failed to like post');
             }
