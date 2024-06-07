@@ -30,7 +30,10 @@ const Home = () => {
 
     // Update the specific post in the feed
     const handlePostUpdate = (updatedPost) => {
-        mutate(prevPosts => prevPosts.map(p => p._id === updatedPost._id ? updatedPost : p), false);
+        mutate(prevPosts => {
+            if (!prevPosts) return prevPosts; // Handle undefined prevPosts
+            return prevPosts.map(p => p._id === updatedPost._id ? updatedPost : p);
+        }, false);
     };
 
     // Render loader while user data or posts data is loading

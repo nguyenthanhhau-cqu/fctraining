@@ -15,7 +15,9 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
     const [isLiked, setIsLiked] = useState(false);
 
     const getUser = async () => {
-        const response = await fetch(`/api/user/${loggedInUser.id}`);
+        const response = await fetch(`/api/user/${loggedInUser.id}`, {
+            next: { revalidate: 10 }, // Add revalidation for user data
+        });
         const data = await response.json();
         setUserData(data);
         setIsLiked(data?.likedPosts?.some((item) => item._id === post._id)); // Set initial isLiked
@@ -23,11 +25,32 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
 
     useEffect(() => {
         getUser();
-    }, []);
+    }, [post._id, loggedInUser.id]); // Add dependencies for user and post
 
     const isSaved = userData?.savedPosts?.find((item) => item._id === post._id);
 
-    // Updated handleSave function
+    const handleSave = async () => {
+        try {
+            const response = await fetch(
+                `/api/user/${loggedInUser.id}/save/${post._id}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.ok) {
+                update();
+            } else {
+                console.error("Failed to save post");
+            }
+        } catch (error) {
+            console.error("Error saving post:", error);
+        }
+    };
+
     const handleLike = async () => {
         try {
             const response = await fetch(
@@ -43,40 +66,15 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
             if (response.ok) {
                 const updatedPost = await response.json();
                 setIsLiked(!isLiked);
-                update(); // Re-fetch the post data after liking/unliking
+                update(updatedPost); // Update the UI with the new post data
             } else {
-                console.error('Failed to like post');
+                console.error("Failed to like post");
             }
         } catch (error) {
-            console.error('Error liking post:', error);
+            console.error("Error liking post:", error);
         }
     };
 
-    const handleSave = async () => {
-        try {
-            const response = await fetch(
-                `/api/user/${loggedInUser.id}/save/${post._id}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            if (response.ok) {
-                const updatedUser = await response.json();
-                setUserData(updatedUser);
-                update(); // Re-fetch the post data after saving/unsaving
-            } else {
-                console.error("Failed to save post");
-            }
-        } catch (error) {
-            console.error("Error saving post:", error);
-        }
-    };
-
-    // Updated handleDelete function
     const handleDelete = async () => {
         try {
             const response = await fetch(`/api/post/${post._id}/${userData._id}`, {
