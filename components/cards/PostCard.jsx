@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const PostCard = ({ post, creator, loggedInUser, update }) => {
+const PostCard = ({ post, creator, loggedInUser, update  }) => {
     const [userData, setUserData] = useState({});
     const [isLiked, setIsLiked] = useState(false);
 
@@ -51,6 +51,7 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
         }
     };
 
+
     const handleLike = async () => {
         try {
             const response = await fetch(
@@ -66,7 +67,9 @@ const PostCard = ({ post, creator, loggedInUser, update }) => {
             if (response.ok) {
                 const updatedPost = await response.json();
                 setIsLiked(!isLiked);
-                update(updatedPost); // Update the UI with the new post data
+
+                // Call the update function after the like is successful
+                update(updatedPost);
             } else {
                 console.error("Failed to like post");
             }

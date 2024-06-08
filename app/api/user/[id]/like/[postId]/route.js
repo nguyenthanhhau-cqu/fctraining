@@ -20,6 +20,7 @@ export const POST = async (req, { params }) => {
 
         const post = await Post.findById(postId).populate("creator likes")
 
+
         const isLiked = user.likedPosts.find((item) => item._id.toString() === postId)
 
         if (isLiked) {
